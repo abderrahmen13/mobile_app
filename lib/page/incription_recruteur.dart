@@ -4,12 +4,54 @@ import 'package:flutter/material.dart';
 import 'package:date_range_form_field/date_range_form_field.dart';
 //import 'package:date/date.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_app/api/api_key.dart';
 import 'package:mobile_app/page/modalite_pai.dart';
 
 import 'delayed_animation.dart';
 import 'package:http/http.dart' as http;
 
-class Inscription_recuteur extends StatelessWidget {
+class Inscription_recuteur extends StatefulWidget {
+  const Inscription_recuteur({super.key});
+
+  @override
+  _Inscription_recuteurState createState() => _Inscription_recuteurState();
+}
+
+class _Inscription_recuteurState extends State<Inscription_recuteur> {
+  var _obscureText = true;
+  String laravelServerApi = ApiKey.laravelServerApi;
+  late TextEditingController controllerName;
+  late TextEditingController controllerAdress;
+  late TextEditingController controllerLastname;
+  late TextEditingController controllerEmail;
+  late TextEditingController controllerPassword;
+  late TextEditingController controllerCity;
+  late TextEditingController controllerCompany;
+
+  @override
+  void initState() {
+    super.initState();
+    controllerName = TextEditingController();
+    controllerAdress = TextEditingController();
+    controllerLastname = TextEditingController();
+    controllerEmail = TextEditingController();
+    controllerPassword = TextEditingController();
+    controllerCity = TextEditingController();
+    controllerCompany = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    controllerName.dispose();
+    controllerAdress.dispose();
+    controllerLastname.dispose();
+    controllerEmail.dispose();
+    controllerPassword.dispose();
+    controllerCity.dispose();
+    controllerCompany.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +95,110 @@ class Inscription_recuteur extends StatelessWidget {
               ),
             ),
             SizedBox(height: 35),
-            recruForm(),
+            Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: 30,
+              ),
+              child: Column(children: [
+                DelayedAnimation(
+                  delay: 3500,
+                  child: TextField(
+                    controller: controllerName,
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ),
+                ),
+                DelayedAnimation(
+                  delay: 3500,
+                  child: TextField(
+                    controller: controllerLastname,
+                    decoration: InputDecoration(
+                      labelText: 'LastName',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ),
+                ),
+                DelayedAnimation(
+                  delay: 3500,
+                  child: TextField(
+                    controller: controllerEmail,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                DelayedAnimation(
+                  delay: 4500,
+                  child: TextField(
+                    controller: controllerPassword,
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                      labelStyle: TextStyle(
+                        color: Colors.grey[400],
+                      ),
+                      labelText: 'mot de passe',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          Icons.visibility,
+                          color: Colors.black,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                DelayedAnimation(
+                  delay: 3500,
+                  child: TextField(
+                    controller: controllerAdress,
+                    decoration: InputDecoration(
+                      labelText: 'Adresse',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ),
+                ),
+                DelayedAnimation(
+                  delay: 3500,
+                  child: TextField(
+                    controller: controllerCity,
+                    decoration: InputDecoration(
+                      labelText: 'Ville',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ),
+                ),
+                DelayedAnimation(
+                  delay: 3500,
+                  child: TextField(
+                    controller: controllerCompany,
+                    decoration: InputDecoration(
+                      labelText: 'Entreprise',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
+            ),
             SizedBox(height: 125),
             DelayedAnimation(
               delay: 5500,
@@ -75,18 +220,23 @@ class Inscription_recuteur extends StatelessWidget {
                   ),*/
                 ),
                 onPressed: () async {
+                  var res = await http
+                      .post(Uri.parse('$laravelServerApi/users/create'), body: {
+                    "Role": "client",
+                    "firstName": controllerName.value.text,
+                    "lastName": controllerLastname.value.text,
+                    "address": controllerAdress.value.text,
+                    "city": controllerCity.value.text,
+                    "email": controllerEmail.value.text,
+                    "password": controllerPassword.value.text,
+                    "company": controllerCompany.value.text,
+                  });
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => modalite_pai(),
                     ),
                   );
-                  await http.post(
-                      Uri.parse('http://10.0.2.2:8000/api/users/create/'),
-                      body: {
-                        "Role": "client",
-                        // "first_name": widget.email.password
-                      });
                 },
               ),
             ),
@@ -116,115 +266,6 @@ class Inscription_recuteur extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class recruForm extends StatefulWidget {
-  @override
-  _recruFormState createState() => _recruFormState();
-}
-
-class _recruFormState extends State<recruForm> {
-  var _obscureText = true;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: 30,
-      ),
-      child: Column(children: [
-        DelayedAnimation(
-          delay: 3500,
-          child: TextField(
-            decoration: InputDecoration(
-              labelText: 'Name',
-              labelStyle: TextStyle(
-                color: Colors.grey[400],
-              ),
-            ),
-          ),
-        ),
-        DelayedAnimation(
-          delay: 3500,
-          child: TextField(
-            decoration: InputDecoration(
-              labelText: 'LastName',
-              labelStyle: TextStyle(
-                color: Colors.grey[400],
-              ),
-            ),
-          ),
-        ),
-        DelayedAnimation(
-          delay: 3500,
-          child: TextField(
-            decoration: InputDecoration(
-              labelText: 'Email',
-              labelStyle: TextStyle(
-                color: Colors.grey[400],
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 30),
-        DelayedAnimation(
-          delay: 4500,
-          child: TextField(
-            obscureText: _obscureText,
-            decoration: InputDecoration(
-              labelStyle: TextStyle(
-                color: Colors.grey[400],
-              ),
-              labelText: 'mot de passe',
-              suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.visibility,
-                  color: Colors.black,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscureText = !_obscureText;
-                  });
-                },
-              ),
-            ),
-          ),
-        ),
-        DelayedAnimation(
-          delay: 3500,
-          child: TextField(
-            decoration: InputDecoration(
-              labelText: 'Adresse',
-              labelStyle: TextStyle(
-                color: Colors.grey[400],
-              ),
-            ),
-          ),
-        ),
-        DelayedAnimation(
-          delay: 3500,
-          child: TextField(
-            decoration: InputDecoration(
-              labelText: 'Ville',
-              labelStyle: TextStyle(
-                color: Colors.grey[400],
-              ),
-            ),
-          ),
-        ),
-        DelayedAnimation(
-          delay: 3500,
-          child: TextField(
-            decoration: InputDecoration(
-              labelText: 'Entreprise',
-              labelStyle: TextStyle(
-                color: Colors.grey[400],
-              ),
-            ),
-          ),
-        ),
-      ]),
     );
   }
 }

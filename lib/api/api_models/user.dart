@@ -21,6 +21,10 @@ class User {
   String? gender;
   @JsonKey(name : 'role')
   double? role;
+  @JsonKey(name : 'email')
+  String? email;
+  @JsonKey(name : 'password')
+  String? password;
   @JsonKey(name : 'email_verified')
   double? email_verified;
   @JsonKey(name : 'cv')
@@ -52,6 +56,8 @@ class User {
       this.city,
       this.birthdate,
       this.gender,
+      this.email,
+      this.password,
       this.role,
       this.email_verified,
       this.cv,
